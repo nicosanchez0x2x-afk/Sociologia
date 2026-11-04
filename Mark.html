@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Granovetter: Carrera por el Empleo</title>
+  <style>
+    /* Estilos Generales y Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: #020617;
+      color: #f8fafc;
+      min-height: 100vh;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    /* Encabezado */
+    header {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 1.5rem auto;
+    }
+    .badge-top {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      font-size: 0.7rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+    }
+    header p {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Tablero de Competencia (Grid 1 vs 1) */
+    main {
+      width: 100%;
+      max-width: 1050px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    /* Tarjetas de Jugador */
+    .player-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .card-strong {
+      border: 2px solid rgba(245, 158, 11, 0.4);
+    }
+    .card-weak {
+      border: 2px solid rgba(6, 182, 212, 0.4);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .player-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .icon-box {
+      font-size: 1.5rem;
+      padding: 0.4rem;
+      border-radius: 0.75rem;
+    }
+    .card-strong .icon-box {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .card-weak .icon-box {
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .player-title {
+      font-weight: 800;
+      font-size: 1.05rem;
+      line-height: 1.2;
+    }
+    .card-strong .player-title { color: #fbbf24; }
+    .card-weak .player-title { color: #22d3ee; }
+
+    .player-subtitle {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    .turn-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.5rem;
+    }
+    .card-strong .turn-badge {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fde68a;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .card-weak .turn-badge {
+      background: rgba(6, 182, 212, 0.2);
+      color: #a5f3fc;
+      border: 1px solid rgba(6, 182, 212, 0.4);
+    }
+
+    /* Barras de Progreso */
+    .progress-box {
+      background: #020617;
+      border: 1px solid #1e293b;
+      padding: 0.85rem;
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .bar-track {
+      width: 100%;
+      background: #0f172a;
+      border-radius: 9999px;
+      border: 1px solid #1e293b;
+      overflow: hidden;
+    }
+    .track-tall { height: 0.75rem; }
+    .track-slim { height: 0.5rem; }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+    .fill-strong-score { background: linear-gradient(90deg, #f59e0b, #ea580c); }
+    .fill-weak-score { background: linear-gradient(90deg, #06b6d4, #2563eb); }
+    .fill-trust { background: #10b981; }
+
+    /* Feed de Eventos */
+    .feed-container {
+      height: 150px;
+      overflow-y: auto;
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid #1e293b;
+      border-radius: 0.75rem;
+      padding: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+    }
+    .feed-empty {
+      color: #64748b;
+      font-style: italic;
+      text-align: center;
+      margin: auto;
+    }
+    .log-item {
+      padding: 0.5rem;
+      border-radius: 0.4rem;
+      line-height: 1.35;
+    }
+    .log-strong {
+      background: rgba(69, 26, 3, 0.4);
+      border-left: 3px solid #f59e0b;
+      color: #fef3c7;
+    }
+    .log-weak {
+      background: rgba(8, 47, 73, 0.4);
+      border-left: 3px solid #06b6d4;
+      color: #e0f2fe;
+    }
+
+    /* Botones */
+    .btn-action {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      border-radius: 0.75rem;
+      border: none;
+      cursor: pointer;
+      color: #ffffff;
+      margin-top: 1rem;
+      transition: transform 0.1s, opacity 0.2s, background 0.2s;
+    }
+    .btn-action:active { transform: scale(0.98); }
+    .btn-action:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .btn-strong {
+      background: linear-gradient(90deg, #d97706, #ea580c);
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
+    }
+    .btn-weak {
+      background: linear-gradient(90deg, #0891b2, #2563eb);
+      box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+    }
+
+    /* Modal de Análisis */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      max-width: 580px;
+      width: 100%;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .modal-tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+    }
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin-top: 0.35rem;
+    }
+    .btn-reset {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    .analysis-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+    .analysis-card {
+      background: #020617;
+      border: 1px solid #1e293b;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+    }
+    .analysis-card b {
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    /* Pie */
+    footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge-top">Taller Expositivo · Dinámica Competitiva 1 vs 1</div>
+    <h1>¿Quién Consigue la Vacante Primero?</h1>
+    <p>Competencia entre Lazos Fuertes (Círculo Íntimo) vs. Lazos Débiles (Puentes Locales). Cada participante tiene 4 turnos.</p>
+  </header>
+
+  <main>
+    <!-- JUGADOR 1: LAZOS FUERTES -->
+    <div class="player-card card-strong">
+      <div>
+        <div class="card-header">
+          <div class="player-meta">
+            <span class="icon-box">🛡️</span>
+            <div>
+              <div class="player-title">Participante 1: Lazos Fuertes</div>
+              <div class="player-subtitle">Familia y amigos íntimos (Red densa)</div>
+            </div>
+          </div>
+          <span id="badgeTurnStrong" class="turn-badge">Turno: 0 / 4</span>
+        </div>
+
+        <div class="progress-box">
+          <div>
+            <div class="bar-label">
+              <span style="color: #cbd5e1;">🎯 Acceso a Vacante Inédita</span>
+              <span id="txtScoreStrong" style="color: #fbbf24; font-family: monospace;">0%</span>
+            </div>
+            <div class="bar-track track-tall">
+              <div id="barScoreStrong" class="bar-fill fill-strong-score"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="bar-label">
+              <span style="color: #cbd5e1;">🤝 Confianza Relacional (Incrustación)</span>
+              <span id="txtTrustStrong" style="color: #34d399; font-family: monospace;">80%</span>
+            </div>
+            <div class="bar-track track-slim">
+              <div id="barTrustStrong" class="bar-fill fill-trust" style="width: 80%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="feedStrong" class="feed-container">
+          <div class="feed-empty">Haz clic abajo para consultar a tu círculo íntimo...</div>
+        </div>
+      </div>
+
+      <button id="btnStrong" onclick="playStrong()" class="btn-action btn-strong">
+        Consultar Amigo Íntimo / Familiar
+      </button>
+    </div>
+
+    <!-- JUGADOR 2: LAZOS DÉBILES -->
+    <div class="player-card card-weak">
+      <div>
+        <div class="card-header">
+          <div class="player-meta">
+            <span class="icon-box">⚡</span>
+            <div>
+              <div class="player-title">Participante 2: Lazos Débiles</div>
+              <div class="player-subtitle">Conocidos casuales y puentes locales</div>
+            </div>
+          </div>
+          <span id="badgeTurnWeak" class="turn-badge">Turno: 0 / 4</span>
+        </div>
+
+        <div class="progress-box">
+          <div>
+            <div class="bar-label">
+              <span style="color: #cbd5e1;">🎯 Acceso a Vacante Inédita</span>
+              <span id="txtScoreWeak" style="color: #22d3ee; font-family: monospace;">0%</span>
+            </div>
+            <div class="bar-track track-tall">
+              <div id="barScoreWeak" class="bar-fill fill-weak-score"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="bar-label">
+              <span style="color: #cbd5e1;">🤝 Confianza Relacional (Incrustación)</span>
+              <span id="txtTrustWeak" style="color: #34d399; font-family: monospace;">20%</span>
+            </div>
+            <div class="bar-track track-slim">
+              <div id="barTrustWeak" class="bar-fill fill-trust" style="width: 20%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="feedWeak" class="feed-container">
+          <div class="feed-empty">Haz clic abajo para contactar a conocidos distantes...</div>
+        </div>
+      </div>
+
+      <button id="btnWeak" onclick="playWeak()" class="btn-action btn-weak">
+        Activar Puente con Conocido Distante
+      </button>
+    </div>
+  </main>
+
+  <!-- MODAL DE ANÁLISIS SINTETIZADO -->
+  <div id="modalAnalysis" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <span id="modalTag" class="modal-tag"></span>
+          <h2 id="modalTitle" class="modal-title"></h2>
+        </div>
+        <button onclick="resetGame()" class="btn-reset">🔄 Otra Ronda</button>
+      </div>
+
+      <div class="analysis-list">
+        <div class="analysis-card">
+          <b style="color: #ffffff;">📊 Evidencia del Resultado:</b>
+          <p id="modalEvidence" style="color: #cbd5e1;"></p>
+        </div>
+        <div class="analysis-card">
+          <b style="color: #38bdf8;">🌉 1. Lazos Débiles y Puentes Locales (1973):</b>
+          <p id="modalWeakTheory" style="color: #cbd5e1;"></p>
+        </div>
+        <div class="analysis-card">
+          <b style="color: #34d399;">💼 2. Incrustación Social y Confianza (1985):</b>
+          <p id="modalEmbedTheory" style="color: #cbd5e1;"></p>
+        </div>
+      </div>
+
+      <button onclick="resetGame()" class="btn-action" style="background: #4f46e5; margin-top: 1rem;">
+        Jugar Nueva Ronda con Otros Dos Compañeros
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    Estudio empírico de Boston: <b>83,4%</b> consiguió empleo por contactos ocasionales o raros · Tesis de Incrustación: La economía opera en redes personales reales.
+  </footer>
+
+  <script>
+    const MAX_TRIES = 4;
+    let turnStrong = 0;
+    let turnWeak = 0;
+    let scoreStrong = 0;
+    let scoreWeak = 0;
+    let trustStrong = 80;
+    let trustWeak = 20;
+    let isFinished = false;
+
+    const strongEvents = [
+      { text: "👥 <b>Mejor amigo:</b> 'Reviso las mismas bolsas de empleo que tú; no hay nada nuevo'.", pts: 10, trust: 5 },
+      { text: "☕ <b>Compañero íntimo:</b> Apoyo moral sincero, pero sin contactos en otras áreas.", pts: 10, trust: 5 },
+      { text: "🔄 <b>Chat familiar:</b> Reenvían una oferta laboral ya cerrada hace una semana.", pts: 10, trust: 0 },
+      { text: "🤝 <b>Hermano:</b> Preguntó a sus amigos íntimos; todos compiten por las mismas vacantes.", pts: 15, trust: 5 },
+      { text: "🌟 <b>Negocio de un familiar:</b> Un tío te abre una vacante directa en su empresa.", pts: 75, trust: 10 }
+    ];
+
+    const weakEvents = [
+      { text: "📩 <b>Excompañero de semestre:</b> 'En mi empresa se abrió un cupo que aún no es público'.", pts: 35, trust: 20 },
+      { text: "💼 <b>Contacto de un congreso:</b> 'Pásame tu CV, te presento directamente con el director'.", pts: 35, trust: 20 },
+      { text: "🌐 <b>Conocido lejano:</b> Su empresa necesitaba tu perfil exacto y valida tu reputación.", pts: 30, trust: 25 },
+      { text: "☕ <b>Exprofesor de otra área:</b> Te conecta con un colega de otra firma interesada.", pts: 35, trust: 20 },
+      { text: "⏳ <b>Contacto distante:</b> Demoró en responder el mensaje.", pts: 10, trust: 5 }
+    ];
+
+    function getRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function playStrong() {
+      if (isFinished || turnStrong >= MAX_TRIES) return;
+      turnStrong++;
+      document.getElementById('badgeTurnStrong').textContent = `Turno: ${turnStrong} / ${MAX_TRIES}`;
+
+      let ev = Math.random() < 0.85 ? getRandom(strongEvents.slice(0, 4)) : strongEvents[4];
+      scoreStrong = Math.min(100, scoreStrong + ev.pts);
+      trustStrong = Math.min(100, trustStrong + ev.trust);
+
+      document.getElementById('barScoreStrong').style.width = scoreStrong + "%";
+      document.getElementById('txtScoreStrong').textContent = scoreStrong + "%";
+      document.getElementById('barTrustStrong').style.width = trustStrong + "%";
+      document.getElementById('txtTrustStrong').textContent = trustStrong + "%";
+
+      const feed = document.getElementById('feedStrong');
+      if (turnStrong === 1) feed.innerHTML = "";
+      feed.insertAdjacentHTML('afterbegin', `
+        <div class="log-item log-strong">
+          ${ev.text} <span style="color: #fbbf24; font-weight: bold;">(+${ev.pts}% avance)</span>
+        </div>
+      `);
+
+      if (turnStrong === MAX_TRIES) document.getElementById('btnStrong').disabled = true;
+      checkGameState();
+    }
+
+    function playWeak() {
+      if (isFinished || turnWeak >= MAX_TRIES) return;
+      turnWeak++;
+      document.getElementById('badgeTurnWeak').textContent = `Turno: ${turnWeak} / ${MAX_TRIES}`;
+
+      let ev = getRandom(weakEvents);
+      scoreWeak = Math.min(100, scoreWeak + ev.pts);
+      trustWeak = Math.min(100, trustWeak + ev.trust);
+
+      document.getElementById('barScoreWeak').style.width = scoreWeak + "%";
+      document.getElementById('txtScoreWeak').textContent = scoreWeak + "%";
+      document.getElementById('barTrustWeak').style.width = trustWeak + "%";
+      document.getElementById('txtTrustWeak').textContent = trustWeak + "%";
+
+      const feed = document.getElementById('feedWeak');
+      if (turnWeak === 1) feed.innerHTML = "";
+      feed.insertAdjacentHTML('afterbegin', `
+        <div class="log-item log-weak">
+          ${ev.text} <span style="color: #22d3ee; font-weight: bold;">(+${ev.pts}% avance)</span>
+        </div>
+      `);
+
+      if (turnWeak === MAX_TRIES) document.getElementById('btnWeak').disabled = true;
+      checkGameState();
+    }
+
+    function checkGameState() {
+      if (scoreStrong >= 100 || scoreWeak >= 100 || (turnStrong === MAX_TRIES && turnWeak === MAX_TRIES)) {
+        isFinished = true;
+        document.getElementById('btnStrong').disabled = true;
+        document.getElementById('btnWeak').disabled = true;
+        showModalAnalysis();
+      }
+    }
+
+    function showModalAnalysis() {
+      const modal = document.getElementById('modalAnalysis');
+      const tag = document.getElementById('modalTag');
+      const title = document.getElementById('modalTitle');
+      const evid = document.getElementById('modalEvidence');
+      const weakT = document.getElementById('modalWeakTheory');
+      const embedT = document.getElementById('modalEmbedTheory');
+
+      modal.style.display = 'flex';
+
+      if (scoreWeak > scoreStrong) {
+        tag.style.background = 'rgba(6, 182, 212, 0.2)';
+        tag.style.color = '#67e8f9';
+        tag.textContent = "Resultado Predicho por Granovetter (83,4%)";
+        title.innerHTML = "🏆 Ganador: Lazos Débiles (Puente e Incrustación)";
+
+        evid.innerHTML = `El Participante 2 alcanzó el <b>${scoreWeak}%</b> de acceso a la vacante frente al <b>${scoreStrong}%</b> del Participante 1. Aunque los lazos fuertes tenían un <b>${trustStrong}%</b> de confianza afectiva inicial, la información fue redundante y circular.`;
+        weakT.innerHTML = "<b>La paradoja de los lazos (1973):</b> Tus amigos íntimos se mueven en tu mismo círculo social. Los conocidos lejanos actúan como <b>puentes locales</b> hacia círculos ajenos donde circulan oportunidades laborales inéditas.";
+        embedT.innerHTML = "<b>Incrustación de la Confianza (1985):</b> Conseguir empleo no es una subasta impersonal en un mercado frío. La vacante se concretó porque un conocido puente avaló la reputación del postulante dentro de su red.";
+      } else if (scoreStrong > scoreWeak) {
+        tag.style.background = 'rgba(245, 158, 11, 0.2)';
+        tag.style.color = '#fde68a';
+        tag.textContent = "Caso de Excepción Empírica (16,7%)";
+        title.innerHTML = "🏆 Ganador: Lazos Fuertes (Excepción por Apoyo Directo)";
+
+        evid.innerHTML = `El Participante 1 ganó gracias a su <b>${trustStrong}%</b> de confianza afectiva y un apoyo directo extraordinario (apoyo familiar). El Participante 2 alcanzó el <b>${scoreWeak}%</b>.`;
+        weakT.innerHTML = "<b>La Excepción de Granovetter (1973):</b> Un 16,7% consigue trabajo por lazos fuertes porque existe altísima motivación y afecto para ayudar, pero depender solo de ellos fragmenta a la sociedad en círculos cerrados incapaces de articularse.";
+        embedT.innerHTML = "<b>Incrustación Intensa (1985):</b> La decisión económica quedó totalmente subordinada a la lealtad familiar, demostrando que el ser humano nunca actúa como un individuo atomizado.";
+      } else {
+        tag.style.background = 'rgba(99, 102, 241, 0.2)';
+        tag.style.color = '#c7d2fe';
+        tag.textContent = "Convergencia de Redes";
+        title.innerHTML = "🤝 Empate: Convergencia de Canales";
+
+        evid.innerHTML = `Ambos participantes quedaron empatados al cierre de sus 4 turnos.`;
+        weakT.innerHTML = "<b>Complementariedad:</b> Los lazos fuertes otorgan soporte emocional cotidiano; los lazos débiles ofrecen canales de integración hacia el sistema macro.";
+        embedT.innerHTML = "<b>Estructura Mixta:</b> Toda actividad económica exitosa articula la confianza afectiva con la extensión de puentes relacionales.";
+      }
+    }
+
+    function resetGame() {
+      turnStrong = 0;
+      turnWeak = 0;
+      scoreStrong = 0;
+      scoreWeak = 0;
+      trustStrong = 80;
+      trustWeak = 20;
+      isFinished = false;
+
+      document.getElementById('badgeTurnStrong').textContent = `Turno: 0 / ${MAX_TRIES}`;
+      document.getElementById('badgeTurnWeak').textContent = `Turno: 0 / ${MAX_TRIES}`;
+
+      document.getElementById('barScoreStrong').style.width = "0%";
+      document.getElementById('txtScoreStrong').textContent = "0%";
+      document.getElementById('barTrustStrong').style.width = "80%";
+      document.getElementById('txtTrustStrong').textContent = "80%";
+
+      document.getElementById('barScoreWeak').style.width = "0%";
+      document.getElementById('txtScoreWeak').textContent = "0%";
+      document.getElementById('barTrustWeak').style.width = "20%";
+      document.getElementById('txtTrustWeak').textContent = "20%";
+
+      document.getElementById('feedStrong').innerHTML = '<div class="feed-empty">Haz clic abajo para consultar a tu círculo íntimo...</div>';
+      document.getElementById('feedWeak').innerHTML = '<div class="feed-empty">Haz clic abajo para contactar a conocidos distantes...</div>';
+
+      document.getElementById('btnStrong').disabled = false;
+      document.getElementById('btnWeak').disabled = false;
+      document.getElementById('modalAnalysis').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
