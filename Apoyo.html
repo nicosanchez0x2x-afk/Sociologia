@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuaderno de Sociología: Mark Granovetter (1973 - 1985)</title>
+  <style>
+    /* Estética de Cuaderno de Notas / Ficha de Campo Universitaria */
+    :root {
+      --bg-sheet: #f7f3ea;
+      --grid-line: #e3d9c7;
+      --card-bg: #fffefb;
+      --ink: #1c1917;
+      --ink-muted: #5e574d;
+      --border-ink: #2b2520;
+      --strong-ink: #1b4332;   /* Verde bosque profundo (Lazos Fuertes) */
+      --weak-ink: #9b2226;     /* Lacre / Rojo óxido (Lazos Débiles) */
+      --accent-ink: #1e3a8a;   /* Azul tinta china */
+      --highlight: #fef9e7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Courier New", Courier, monospace, system-ui;
+    }
+
+    body {
+      background-color: var(--bg-sheet);
+      background-image: 
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Encabezado */
+    header {
+      width: 100%;
+      max-width: 1100px;
+      border-bottom: 2px dashed var(--border-ink);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .title-block h1 {
+      font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    .title-block p {
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+    }
+
+    .stamp-tag {
+      border: 1.5px solid var(--border-ink);
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: bold;
+      background: var(--card-bg);
+      text-transform: uppercase;
+      box-shadow: 2px 2px 0px var(--border-ink);
+    }
+
+    /* Pestañas */
+    .nav-tabs {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .tab-btn {
+      background: #eae0d0;
+      border: 1.5px solid var(--border-ink);
+      border-bottom: none;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px 4px 0 0;
+      color: var(--ink);
+      white-space: nowrap;
+      transition: all 0.1s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--card-bg);
+      border-bottom: 2px solid var(--card-bg);
+      margin-bottom: -2px;
+      z-index: 2;
+    }
+
+    /* Contenedor Principal */
+    .main-box {
+      width: 100%;
+      max-width: 1100px;
+      background: var(--card-bg);
+      border: 2px solid var(--border-ink);
+      box-shadow: 5px 5px 0px var(--border-ink);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Controles */
+    .deck-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      border-bottom: 1px dotted var(--border-ink);
+      padding-bottom: 10px;
+    }
+
+    .stamp-btn {
+      background: #f0e6d6;
+      border: 1.5px solid var(--border-ink);
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 2px 2px 0px var(--border-ink);
+      border-radius: 2px;
+      transition: transform 0.08s, box-shadow 0.08s;
+    }
+
+    .stamp-btn:hover {
+      background: #e4d7c3;
+    }
+
+    .stamp-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0px 0px 0px var(--border-ink);
+    }
+
+    /* Grilla de Exposición */
+    .expo-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 820px) {
+      .expo-grid {
+        grid-template-columns: 1.35fr 0.95fr;
+      }
+    }
+
+    /* Marco del Canvas */
+    .canvas-box {
+      width: 100%;
+      border: 1.5px solid var(--border-ink);
+      background: #fbf9f4;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 400px;
+    }
+
+    /* Ficha Teórica */
+    .theory-card {
+      border: 1.5px solid var(--border-ink);
+      background: #faf6ed;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .theory-card h3 {
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid var(--border-ink);
+      padding-bottom: 4px;
+      color: var(--border-ink);
+    }
+
+    .cue-box {
+      background: var(--highlight);
+      border-left: 3px solid var(--border-ink);
+      padding: 8px 12px;
+      font-size: 0.8rem;
+    }
+
+    .stat-pill {
+      font-size: 0.76rem;
+      border: 1px dashed var(--border-ink);
+      padding: 6px 8px;
+      background: #fff;
+    }
+
+    /* Vistas de Figuras */
+    .fig-pane {
+      display: none;
+    }
+    .fig-pane.active {
+      display: block;
+    }
+
+    footer {
+      max-width: 1100px;
+      width: 100%;
+      margin-top: 12px;
+      font-size: 0.74rem;
+      text-align: center;
+      color: var(--ink-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado General -->
+  <header>
+    <div class="title-block">
+      <h1>Mark Granovetter: Redes, Acción e Incrustación</h1>
+      <p>Soporte gráfico conceptual para taller expositivo (1973 - 1985)</p>
+    </div>
+    <div class="stamp-tag">
+      Ruptura con el Estructural-Funcionalismo
+    </div>
+  </header>
+
+  <!-- Pestañas -->
+  <div class="nav-tabs">
+    <button id="tab1" class="tab-btn active" onclick="switchFigure(1)">Fig 1: Trío Prohibido</button>
+    <button id="tab2" class="tab-btn" onclick="switchFigure(2)">Fig 2: Puente Local (2 Grupos)</button>
+    <button id="tab3" class="tab-btn" onclick="switchFigure(3)">Fig 3: Individuo e Incrustación (1985)</button>
+    <button id="tab4" class="tab-btn" onclick="switchFigure(4)">Fig 4: Acción Colectiva (West End)</button>
+  </div>
+
+  <main class="main-box">
+
+    <!-- LÁMINA 1: EL TRÍO PROHIBIDO (1973) -->
+    <div id="pane1" class="fig-pane active">
+      <div class="deck-controls">
+        <button class="stamp-btn" onclick="toggleTrio()">Cerrar / Abrir Tríada (B - C)</button>
+        <button class="stamp-btn" onclick="resetTrio()">Reiniciar</button>
+        <span id="txtTrioStatus" style="font-size: 0.78rem; font-weight: bold; margin-left: auto;">
+          A-B y A-C son Lazos Fuertes (B-C Ausente)
+        </span>
+      </div>
+
+      <div class="expo-grid">
+        <div class="canvas-box">
+          <canvas id="cvTrio"></canvas>
+        </div>
+
+        <div class="theory-card">
+          <div>
+            <h3>Figura 1: Postulado del Trío Prohibido (1973)</h3>
+            <p style="margin-top: 6px;">
+              Si el lazo entre <b>A-B es fuerte</b> y entre <b>A-C es fuerte</b>, es altamente improbable que entre <b>B y C</b> no exista relación. El tiempo compartido, la homofilia y el balance cognitivo fuerzan la aparición del vínculo B-C.
+            </p>
+            <p style="margin-top: 6px;">
+              <b>Consecuencia estructural:</b> Los lazos fuertes cierran triángulos en grupos pequeños, generando <b>camarillas densas (cliques)</b> saturadas de información redundante.
+            </p>
+          </div>
+
+          <div class="cue-box">
+            <b>Postulado Central:</b><br>
+            <i>«El trío prohibido demuestra por qué los círculos íntimos tienden al encierro: todos los amigos cercanos terminan conociéndose entre sí».</i>
+          </div>
+
+          <div class="stat-pill">
+            <b>Evidencia de Davis (1970):</b> El 90% de las tríadas con dos elecciones fuertes mutuas cerraron el tercer lazo, confirmando la improbabilidad empírica de la tríada abierta.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LÁMINA 2: EL PUENTE LOCAL (1973) -->
+    <div id="pane2" class="fig-pane">
+      <div class="deck-controls">
+        <button class="stamp-btn" onclick="diffuseStrong()">1. Difusión Interna (Lazos Fuertes)</button>
+        <button class="stamp-btn" onclick="diffuseWeak()">2. Cruzar Puente (Lazo Débil)</button>
+        <button class="stamp-btn" onclick="toggleBridge()">3. Cortar / Conectar Puente</button>
+        <button class="stamp-btn" onclick="resetBridge()">Reiniciar</button>
+      </div>
+
+      <div class="expo-grid">
+        <div class="canvas-box">
+          <canvas id="cvBridge"></canvas>
+        </div>
+
+        <div class="theory-card">
+          <div>
+            <h3 id="txtBridgeTitle">Figura 2: Teorema del Puente Local</h3>
+            <p id="txtBridgeDesc" style="margin-top: 6px;">
+              Un puente local es una arista que constituye el único camino practicable entre dos grupos sociales. Debido al trío prohibido, <b>ningún lazo fuerte puede ser un puente local</b>: todos los puentes son estructuralmente lazos débiles.
+            </p>
+          </div>
+
+          <div class="cue-box" id="txtBridgeCue">
+            <b>Postulado Central:</b><br>
+            <i>«Los lazos débiles son autopistas hacia mundos ajenos. Sin ellos, el rumor o la oportunidad de empleo queda atrapada en el mismo círculo íntimo».</i>
+          </div>
+
+          <div class="stat-pill">
+            <b>Datos de Boston (Granovetter, 1973):</b> El 83,4% de los profesionales consiguieron empleo a través de contactos vistos ocasional o raramente (lazos débiles), superando al 16,7% del círculo íntimo.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LÁMINA 3: DEFINICIÓN DE INDIVIDUO E INCRUSTACIÓN (1985) -->
+    <div id="pane3" class="fig-pane">
+      <div class="deck-controls">
+        <button class="stamp-btn" onclick="setParadigm('infra')">1. Visión Infra-socializada (Neoclásica)</button>
+        <button class="stamp-btn" onclick="setParadigm('sobre')">2. Visión Sobre-socializada (Parsons)</button>
+        <button class="stamp-btn" onclick="setParadigm('incrustada')">3. Incrustación Relacional (Granovetter)</button>
+      </div>
+
+      <div class="expo-grid">
+        <div class="canvas-box">
+          <canvas id="cvAction"></canvas>
+        </div>
+
+        <div class="theory-card">
+          <div>
+            <h3 id="txtActionTitle">3. Incrustación Relacional (Mark Granovetter, 1985)</h3>
+            <p id="txtActionDesc" style="margin-top: 6px;">
+              El individuo es un actor social concreto cuyas decisiones económicas están mediadas por vínculos personales, reputación e historias continuas de interacción.
+            </p>
+          </div>
+
+          <div class="cue-box" id="txtActionCue">
+            <b>Postulado Central:</b><br>
+            <i>«El individuo no es un átomo egoísta aislado ni un autómata que obedece roles normativos ciegamente; es un nodo activo cuyas decisiones económicas están mediadas por vínculos personales e historias de interacción en curso».</i>
+          </div>
+
+          <div class="stat-pill" id="txtActionPill">
+            <b>Tesis Central:</b> Toda acción económica moderna está incrustada (embedded) estructural y relacionalmente en redes sociales vivas.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LÁMINA 4: ACCIÓN COLECTIVA Y COMUNITARIA (WEST END VS CHARLESTOWN) -->
+    <div id="pane4" class="fig-pane">
+      <div class="deck-controls">
+        <button class="stamp-btn" onclick="setCommunityMode('westend')">Modo: West End (Solo Lazos Fuertes)</button>
+        <button class="stamp-btn" onclick="setCommunityMode('charlestown')">Modo: Charlestown (Con Lazos Débiles)</button>
+        <button class="stamp-btn" onclick="triggerThreat()">Simular Amenaza Externa</button>
+      </div>
+
+      <div class="expo-grid">
+        <div class="canvas-box">
+          <canvas id="cvCommunity"></canvas>
+        </div>
+
+        <div class="theory-card">
+          <div>
+            <h3 id="txtCommTitle">Organización Comunitaria: Cohesión vs Fragmentación</h3>
+            <p id="txtCommDesc" style="margin-top: 6px;">
+              En el <b>West End de Boston</b>, la sociabilidad intensa en familias y camarillas cerradas produjo una alta lealtad interna pero <b>parálisis comunitaria</b>: sin puentes locales entre cliques, fue imposible articular un liderazgo común contra la demolición urbana.
+            </p>
+          </div>
+
+          <div class="cue-box" id="txtCommCue">
+            <b>Postulado Central:</b><br>
+            <i>«Una comunidad volcada exclusivamente hacia sus lazos fuertes internos queda atomizada e indefensa; una con ricos lazos débiles transversales genera acción colectiva».</i>
+          </div>
+
+          <div class="stat-pill" id="txtCommPill">
+            <b>Contraste Empírico:</b> Charlestown logró movilizarse y frenar la renovación gracias a que sus clubes y empleos locales generaban puentes débiles intervecinales.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    Cuaderno de sustentación: Mark Granovetter · <i>The Strength of Weak Ties</i> (1973) & <i>The Problem of Embeddedness</i> (1985)
+  </footer>
+
+  <script>
+    /* ==============================================================
+       GESTIÓN DE PESTAÑAS
+       ============================================================== */
+    let currentTab = 1;
+
+    function switchFigure(num) {
+      currentTab = num;
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById('tab' + i).classList.toggle('active', i === num);
+        document.getElementById('pane' + i).classList.toggle('active', i === num);
+      }
+      if (num === 1) initFig1();
+      if (num === 2) initFig2();
+      if (num === 3) initFig3();
+      if (num === 4) initFig4();
+    }
+
+    /* Calibración de nitidez para pantallas HD / Proyectores */
+    function makeCrisp(canvas, ctx) {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+      return { w: rect.width, h: rect.height };
+    }
+
+    /* Utilitarios de trazado técnico */
+    function drawNodeCircle(ctx, x, y, label, fill, subtext = "", isEgo = false) {
+      ctx.save();
+      const radius = isEgo ? 20 : 16;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.lineWidth = isEgo ? 2.5 : 2;
+      ctx.strokeStyle = '#2b2520';
+      ctx.stroke();
+
+      // Sombra rústica
+      ctx.beginPath();
+      ctx.arc(x + 1.5, y + 1.5, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(43, 37, 32, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.fillStyle = '#1c1917';
+      ctx.font = isEgo ? 'bold 12px Courier New' : 'bold 11px Courier New';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (subtext) {
+        ctx.fillText(label, x, y - 6);
+        ctx.font = '9px Courier New';
+        ctx.fillStyle = '#5e574d';
+        ctx.fillText(subtext, x, y + 7);
+      } else {
+        ctx.fillText(label, x, y);
+      }
+      ctx.restore();
+    }
+
+    function drawEdgeLine(ctx, x1, y1, x2, y2, color, width, dashed, label = "", labelOffset = -10) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      if (dashed) ctx.setLineDash([7, 5]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (label) {
+        ctx.fillStyle = color;
+        ctx.font = 'bold 10px Courier New';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        const midX = (x1 + x2) / 2;
+        const midY = (y1 + y2) / 2;
+
+        const textWidth = ctx.measureText(label).width;
+        ctx.fillStyle = '#fbf9f4';
+        ctx.fillRect(midX - textWidth / 2 - 3, midY + labelOffset - 6, textWidth + 6, 12);
+
+        ctx.fillStyle = color;
+        ctx.fillText(label, midX, midY + labelOffset);
+      }
+      ctx.restore();
+    }
+
+    /* ==============================================================
+       LÁMINA 1: TRÍO PROHIBIDO (1973)
+       ============================================================== */
+    const cv1 = document.getElementById('cvTrio');
+    const ctx1 = cv1.getContext('2d');
+    let trioClosed = false;
+
+    function initFig1() {
+      const dim = makeCrisp(cv1, ctx1);
+      renderFig1(dim.w, dim.h);
+    }
+
+    function renderFig1(w, h) {
+      ctx1.clearRect(0, 0, w, h);
+      const nA = { x: w * 0.5, y: h * 0.28, name: "A", sub: "Ego" };
+      const nB = { x: w * 0.28, y: h * 0.74, name: "B", sub: "Íntimo" };
+      const nC = { x: w * 0.72, y: h * 0.74, name: "C", sub: "Íntimo" };
+
+      drawEdgeLine(ctx1, nA.x, nA.y, nB.x, nB.y, '#1b4332', 4, false, "Lazo Fuerte", -12);
+      drawEdgeLine(ctx1, nA.x, nA.y, nC.x, nC.y, '#1b4332', 4, false, "Lazo Fuerte", -12);
+
+      if (trioClosed) {
+        drawEdgeLine(ctx1, nB.x, nB.y, nC.x, nC.y, '#9b2226', 3, false, "Lazo Forzado (Tríada Cerrada)", 14);
+      } else {
+        drawEdgeLine(ctx1, nB.x, nB.y, nC.x, nC.y, '#8c8275', 2, true, "¿Vínculo Ausente? (Prohibido)", 14);
+      }
+
+      drawNodeCircle(ctx1, nA.x, nA.y, nA.name, '#fffdf9', nA.sub, true);
+      drawNodeCircle(ctx1, nB.x, nB.y, nB.name, '#fffdf9', nB.sub);
+      drawNodeCircle(ctx1, nC.x, nC.y, nC.name, '#fffdf9', nC.sub);
+    }
+
+    function toggleTrio() {
+      trioClosed = !trioClosed;
+      document.getElementById('txtTrioStatus').textContent = trioClosed
+        ? "Estado: Triángulo cerrado por transitividad (Trío resuelto)"
+        : "Estado: Hipótesis de vínculo ausente (Inestable según Granovetter)";
+      const r = cv1.getBoundingClientRect();
+      renderFig1(r.width, r.height);
+    }
+
+    function resetTrio() {
+      trioClosed = false;
+      document.getElementById('txtTrioStatus').textContent = "A-B y A-C son Lazos Fuertes (B-C Ausente)";
+      const r = cv1.getBoundingClientRect();
+      renderFig1(r.width, r.height);
+    }
+
+    /* ==============================================================
+       LÁMINA 2: PUENTE LOCAL ENTRE DOS CLUSTERS (1973)
+       ============================================================== */
+    const cv2 = document.getElementById('cvBridge');
+    const ctx2 = cv2.getContext('2d');
+    let bridgeActive = true;
+    let bNodes = [];
+    let bEdges = [];
+    let bPackets = [];
+    let bAnim = null;
+
+    function initFig2() {
+      const dim = makeCrisp(cv2, ctx2);
+      const c1x = dim.w * 0.28, c2x = dim.w * 0.72, cy = dim.h * 0.5;
+
+      bNodes = [
+        { id: "A0", x: c1x + 70, y: cy, label: "Ego A", sub: "", lit: false, ego: true },
+        { id: "A1", x: c1x - 50, y: cy - 70, label: "A1", sub: "", lit: false },
+        { id: "A2", x: c1x - 90, y: cy + 15, label: "A2", sub: "", lit: false },
+        { id: "A3", x: c1x - 30, y: cy + 80, label: "A3", sub: "", lit: false },
+
+        { id: "B0", x: c2x - 70, y: cy, label: "Ego B", sub: "", lit: false, ego: true },
+        { id: "B1", x: c2x + 50, y: cy - 70, label: "B1", sub: "", lit: false },
+        { id: "B2", x: c2x + 90, y: cy + 15, label: "B2", sub: "", lit: false },
+        { id: "B3", x: c2x + 30, y: cy + 80, label: "B3", sub: "", lit: false }
+      ];
+
+      bEdges = [
+        { u: "A0", v: "A1", type: "strong" }, { u: "A0", v: "A2", type: "strong" }, { u: "A0", v: "A3", type: "strong" },
+        { u: "A1", v: "A2", type: "strong" }, { u: "A2", v: "A3", type: "strong" }, { u: "A3", v: "A1", type: "strong" },
+        { u: "B0", v: "B1", type: "strong" }, { u: "B0", v: "B2", type: "strong" }, { u: "B0", v: "B3", type: "strong" },
+        { u: "B1", v: "B2", type: "strong" }, { u: "B2", v: "B3", type: "strong" }, { u: "B3", v: "B1", type: "strong" },
+        { u: "A0", v: "B0", type: "weak" }
+      ];
+
+      if (bAnim) cancelAnimationFrame(bAnim);
+      function loop() {
+        renderFig2(dim.w, dim.h);
+        bAnim = requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    function renderFig2(w, h) {
+      ctx2.clearRect(0, 0, w, h);
+
+      bEdges.forEach(e => {
+        if (e.type === 'weak' && !bridgeActive) return;
+        const n1 = bNodes.find(n => n.id === e.u);
+        const n2 = bNodes.find(n => n.id === e.v);
+        const isW = e.type === 'weak';
+        drawEdgeLine(ctx2, n1.x, n1.y, n2.x, n2.y, isW ? '#9b2226' : '#1b4332', isW ? 2.5 : 3, isW, isW ? "Puente Local" : "", -10);
+      });
+
+      for (let i = bPackets.length - 1; i >= 0; i--) {
+        const p = bPackets[i];
+        p.t += p.spd;
+        const cx = p.x1 + (p.x2 - p.x1) * p.t;
+        const cy = p.y1 + (p.y2 - p.y1) * p.t;
+
+        ctx2.beginPath();
+        ctx2.arc(cx, cy, 6, 0, Math.PI * 2);
+        ctx2.fillStyle = p.col;
+        ctx2.fill();
+        ctx2.strokeStyle = '#1a1714';
+        ctx2.lineWidth = 1.5;
+        ctx2.stroke();
+
+        if (p.t >= 1) {
+          const dest = bNodes.find(n => n.id === p.target);
+          if (dest) dest.lit = true;
+          bPackets.splice(i, 1);
+        }
+      }
+
+      bNodes.forEach(n => {
+        drawNodeCircle(ctx2, n.x, n.y, n.label, n.lit ? '#fef08a' : '#fffdf9', n.sub, n.ego);
+      });
+    }
+
+    function spawnSignal(from, to, col, spd = 0.025) {
+      const u = bNodes.find(n => n.id === from);
+      const v = bNodes.find(n => n.id === to);
+      bPackets.push({ x1: u.x, y1: u.y, x2: v.x, y2: v.y, t: 0, spd: spd, col: col, target: to });
+    }
+
+    function diffuseStrong() {
+      bNodes.forEach(n => n.lit = false);
+      bNodes.find(n => n.id === 'A0').lit = true;
+      spawnSignal('A0', 'A1', '#1b4332', 0.025);
+      spawnSignal('A0', 'A2', '#1b4332', 0.022);
+      spawnSignal('A0', 'A3', '#1b4332', 0.028);
+
+      setTimeout(() => {
+        spawnSignal('A1', 'A2', '#1b4332', 0.035);
+        spawnSignal('A2', 'A3', '#1b4332', 0.03);
+        spawnSignal('A3', 'A1', '#1b4332', 0.035);
+      }, 550);
+
+      document.getElementById('txtBridgeTitle').textContent = "Lazos Fuertes: Redundancia y Cierre";
+      document.getElementById('txtBridgeDesc').textContent = "La información circula velozmente dentro de la camarilla A pero queda atrapada. Nadie recibe noticias inéditas del exterior.";
+      document.getElementById('txtBridgeCue').innerHTML = "<b>Postulado Central:</b><br><i>«En un grupo denso de lazos fuertes, el rumor o la vacante satura al mismo círculo íntimo».</i>";
+    }
+
+    function diffuseWeak() {
+      if (!bridgeActive) {
+        document.getElementById('txtBridgeTitle').textContent = "Aislamiento: Puente Cortado";
+        document.getElementById('txtBridgeDesc').textContent = "Sin el puente local débil, las dos comunidades permanecen incomunicadas.";
+        document.getElementById('txtBridgeCue').innerHTML = "<b>Postulado Central:</b><br><i>«Sin lazos débiles la sociedad colapsa en camarillas cerradas».</i>";
+        return;
+      }
+      bNodes.forEach(n => n.lit = false);
+      bNodes.find(n => n.id === 'A0').lit = true;
+
+      spawnSignal('A0', 'B0', '#9b2226', 0.016);
+      setTimeout(() => {
+        spawnSignal('B0', 'B1', '#9b2226', 0.03);
+        spawnSignal('B0', 'B2', '#9b2226', 0.025);
+        spawnSignal('B0', 'B3', '#9b2226', 0.028);
+      }, 1000);
+
+      document.getElementById('txtBridgeTitle').textContent = "Lazo Débil: Activación del Puente Local";
+      document.getElementById('txtBridgeDesc').textContent = "El lazo débil entre Ego A y Contacto B traslada el mensaje a una comunidad ajena, alcanzando vacantes inéditas.";
+      document.getElementById('txtBridgeCue').innerHTML = "<b>Postulado Central:</b><br><i>«Solo un vínculo débil puede operar como puente local hacia sectores socialmente distantes».</i>";
+    }
+
+    function toggleBridge() {
+      bridgeActive = !bridgeActive;
+      document.getElementById('txtBridgeTitle').textContent = bridgeActive ? "Puente Local Habilitado" : "Puente Local Desconectado";
+      document.getElementById('txtBridgeDesc').textContent = bridgeActive ? "Existe canal directo entre las dos redes." : "Fragmentación relacional del sistema.";
+    }
+
+    function resetBridge() {
+      bridgeActive = true;
+      bPackets = [];
+      bNodes.forEach(n => n.lit = false);
+      document.getElementById('txtBridgeTitle').textContent = "Figura 2: Teorema del Puente Local";
+      document.getElementById('txtBridgeDesc').textContent = "Todos los puentes locales son lazos débiles. La línea punteada entre Ego A y Contacto B representa la autopista de conexión.";
+      document.getElementById('txtBridgeCue').innerHTML = "<b>Postulado Central:</b><br><i>«Los lazos débiles son autopistas hacia mundos ajenos. Sin ellos, el rumor o la oportunidad de empleo queda atrapada en el mismo círculo íntimo».</i>";
+    }
+
+    /* ==============================================================
+       LÁMINA 3: EL TRILEMA DE LA ACCIÓN E INCRUSTACIÓN (1985)
+       ============================================================== */
+    const cv3 = document.getElementById('cvAction');
+    const ctx3 = cv3.getContext('2d');
+    let currentParadigm = 'incrustada';
+
+    function initFig3() {
+      const dim = makeCrisp(cv3, ctx3);
+      renderFig3(dim.w, dim.h);
+    }
+
+    function renderFig3(w, h) {
+      ctx3.clearRect(0, 0, w, h);
+      const cx = w * 0.5;
+      const cy = h * 0.5;
+
+      if (currentParadigm === 'infra') {
+        drawNodeCircle(ctx3, cx, cy, "Actor", "#fffdf9", "Atomizado", true);
+        drawNodeCircle(ctx3, cx - 130, cy - 70, "Mercado", "#eae0d0");
+        drawNodeCircle(ctx3, cx + 130, cy - 70, "Precios", "#eae0d0");
+        drawNodeCircle(ctx3, cx, cy + 110, "Contrato", "#eae0d0");
+
+        drawEdgeLine(ctx3, cx, cy, cx - 130, cy - 70, "#a0aec0", 1, true);
+        drawEdgeLine(ctx3, cx, cy, cx + 130, cy - 70, "#a0aec0", 1, true);
+        drawEdgeLine(ctx3, cx, cy, cx, cy + 110, "#a0aec0", 1, true);
+
+        ctx3.fillStyle = '#9b2226';
+        ctx3.font = 'bold 11px Courier New';
+        ctx3.textAlign = 'center';
+        ctx3.fillText("SIN REDES CONCRETAS (DECISIÓN DESINCRUSTADA)", cx, 30);
+      } 
+      else if (currentParadigm === 'sobre') {
+        ctx3.save();
+        ctx3.beginPath();
+        ctx3.ellipse(cx, cy, 170, 110, 0, 0, Math.PI * 2);
+        ctx3.fillStyle = "rgba(43, 38, 33, 0.06)";
+        ctx3.fill();
+        ctx3.lineWidth = 1.5;
+        ctx3.strokeStyle = "#5e574d";
+        ctx3.setLineDash([5, 4]);
+        ctx3.stroke();
+        ctx3.restore();
+
+        drawNodeCircle(ctx3, cx, cy, "Actor", "#fffdf9", "Autómata", true);
+        drawNodeCircle(ctx3, cx - 105, cy - 50, "Rol", "#eae0d0");
+        drawNodeCircle(ctx3, cx + 105, cy - 50, "Norma", "#eae0d0");
+        drawNodeCircle(ctx3, cx, cy + 70, "Valor", "#eae0d0");
+
+        ctx3.fillStyle = '#1b4332';
+        ctx3.font = 'bold 11px Courier New';
+        ctx3.textAlign = 'center';
+        ctx3.fillText("INTERNALIZACIÓN CIEGA DE NORMAS (PARSONS)", cx, 30);
+      } 
+      else {
+        const ego = { x: cx, y: cy, label: "Ego", sub: "Actor" };
+        const p1  = { x: cx - 140, y: cy - 90, label: "Socio", sub: "Comercial" };
+        const p2  = { x: cx + 140, y: cy - 75, label: "Contacto", sub: "Laboral" };
+        const p3  = { x: cx - 120, y: cy + 100, label: "Red", sub: "Personal" };
+        const p4  = { x: cx + 130, y: cy + 95, label: "Tercero", sub: "Garante" };
+
+        drawEdgeLine(ctx3, ego.x, ego.y, p1.x, p1.y, '#1b4332', 3.5, false, "Lazo Fuerte", -12);
+        drawEdgeLine(ctx3, ego.x, ego.y, p2.x, p2.y, '#9b2226', 2.5, true, "Lazo Débil (Puente)", -12);
+        drawEdgeLine(ctx3, ego.x, ego.y, p3.x, p3.y, '#1b4332', 3, false, "Historia en curso", 14);
+        drawEdgeLine(ctx3, ego.x, ego.y, p4.x, p4.y, '#1b4332', 3, false, "Aval / Reputación", 14);
+        drawEdgeLine(ctx3, p1.x, p1.y, p3.x, p3.y, '#1b4332', 2, false);
+
+        drawNodeCircle(ctx3, ego.x, ego.y, ego.label, "#fef08a", ego.sub, true);
+        drawNodeCircle(ctx3, p1.x, p1.y, p1.label, "#fffdf9", p1.sub);
+        drawNodeCircle(ctx3, p2.x, p2.y, p2.label, "#fffdf9", p2.sub);
+        drawNodeCircle(ctx3, p3.x, p3.y, p3.label, "#fffdf9", p3.sub);
+        drawNodeCircle(ctx3, p4.x, p4.y, p4.label, "#fffdf9", p4.sub);
+
+        ctx3.fillStyle = '#1e3a8a';
+        ctx3.font = 'bold 11px Courier New';
+        ctx3.textAlign = 'center';
+        ctx3.fillText("ACCIÓN ECONÓMICA MEDIADA POR REDES SOCIALES VIVAS", cx, 30);
+      }
+    }
+
+    function setParadigm(mode) {
+      currentParadigm = mode;
+      const tTitle = document.getElementById('txtActionTitle');
+      const tDesc = document.getElementById('txtActionDesc');
+      const tCue = document.getElementById('txtActionCue');
+      const tPill = document.getElementById('txtActionPill');
+
+      if (mode === 'infra') {
+        tTitle.textContent = "1. Visión Infra-socializada (Economía Neoclásica)";
+        tDesc.textContent = "Concibe al individuo como un átomo egoísta, utilitarista y aislado que decide exclusivamente según precios y contratos impersonales, asumiendo que las relaciones sociales son solo 'fricción innecesaria'.";
+        tCue.innerHTML = "<b>Premisa Analizada:</b><br><i>«El actor económico jamás toma decisiones en un vacío social; la concepción neoclásica ignora que los mercados reales se construyen sobre redes interpersonales».</i>";
+        tPill.textContent = "Falla Teórica: Asume que las instituciones y las leyes impersonales son suficientes para prevenir el fraude.";
+      } else if (mode === 'sobre') {
+        tTitle.textContent = "2. Visión Sobre-socializada (Funcionalismo de Parsons)";
+        tDesc.textContent = "Concibe al individuo como un autómata cultural que ha interiorizado totalmente valores y roles sociales, obedeciéndolos sin capacidad de maniobra propia.";
+        tCue.innerHTML = "<b>Premisa Analizada:</b><br><i>«Aunque parece opuesto a la economía, comete el mismo error: atomiza al actor al reducirlo a un títere de un consenso moral abstracto, borrando la red concreta».</i>";
+        tPill.textContent = "Falla Teórica: Cree que la moral universal interiorizada evita el oportunismo sin necesitar sanciones en red.";
+      } else {
+        tTitle.textContent = "3. Incrustación Relacional (Mark Granovetter, 1985)";
+        tDesc.textContent = "El individuo es un actor social concreto cuyas decisiones económicas están mediadas por vínculos personales, reputación e historias continuas de interacción.";
+        tCue.innerHTML = "<b>Postulado Central:</b><br><i>«El individuo no es un átomo egoísta aislado ni un autómata que obedece roles normativos ciegamente; es un nodo activo cuyas decisiones económicas están mediadas por vínculos personales e historias de interacción en curso».</i>";
+        tPill.textContent = "Tesis Central: Toda acción económica moderna está incrustada (embedded) estructural y relacionalmente en redes sociales vivas.";
+      }
+
+      const r = cv3.getBoundingClientRect();
+      renderFig3(r.width, r.height);
+    }
+
+    /* ==============================================================
+       LÁMINA 4: ORGANIZACIÓN COMUNITARIA (WEST END VS CHARLESTOWN)
+       ============================================================== */
+    const cv4 = document.getElementById('cvCommunity');
+    const ctx4 = cv4.getContext('2d');
+    let commMode = 'westend';
+    let underThreat = false;
+
+    function initFig4() {
+      const dim = makeCrisp(cv4, ctx4);
+      renderFig4(dim.w, dim.h);
+    }
+
+    function renderFig4(w, h) {
+      ctx4.clearRect(0, 0, w, h);
+      const c1 = { x: w * 0.25, y: h * 0.35 };
+      const c2 = { x: w * 0.25, y: h * 0.75 };
+      const c3 = { x: w * 0.75, y: h * 0.35 };
+      const c4 = { x: w * 0.75, y: h * 0.75 };
+
+      function drawCluster(c, tag, col) {
+        const pts = [
+          { x: c.x - 22, y: c.y - 18 },
+          { x: c.x + 22, y: c.y - 18 },
+          { x: c.x, y: c.y + 22 }
+        ];
+        drawEdgeLine(ctx4, pts[0].x, pts[0].y, pts[1].x, pts[1].y, col, 2.5, false);
+        drawEdgeLine(ctx4, pts[1].x, pts[1].y, pts[2].x, pts[2].y, col, 2.5, false);
+        drawEdgeLine(ctx4, pts[2].x, pts[2].y, pts[0].x, pts[0].y, col, 2.5, false);
+
+        pts.forEach(p => {
+          drawNodeCircle(ctx4, p.x, p.y, "", underThreat ? (commMode === 'westend' ? '#fecaca' : '#bbf7d0') : '#fffdf9');
+        });
+
+        ctx4.fillStyle = '#1c1917';
+        ctx4.font = 'bold 10px Courier New';
+        ctx4.textAlign = 'center';
+        ctx4.fillText(tag, c.x, c.y + 40);
+      }
+
+      drawCluster(c1, "Camarilla Familiar 1", '#1b4332');
+      drawCluster(c2, "Camarilla Familiar 2", '#1b4332');
+      drawCluster(c3, "Camarilla Vecinal 3", '#1b4332');
+      drawCluster(c4, "Camarilla Vecinal 4", '#1b4332');
+
+      if (commMode === 'charlestown') {
+        drawEdgeLine(ctx4, c1.x, c1.y + 15, c2.x, c2.y - 15, '#9b2226', 2.5, true, "Lazo Débil (Club)", -10);
+        drawEdgeLine(ctx4, c1.x + 20, c1.y, c3.x - 20, c3.y, '#9b2226', 2.5, true, "Lazo Débil (Trabajo)", -10);
+        drawEdgeLine(ctx4, c2.x + 20, c2.y, c4.x - 20, c4.y, '#9b2226', 2.5, true, "Puente Local", -10);
+        drawEdgeLine(ctx4, c3.x, c3.y + 15, c4.x, c4.y - 15, '#9b2226', 2.5, true);
+      } else {
+        ctx4.fillStyle = '#9b2226';
+        ctx4.font = 'bold 11px Courier New';
+        ctx4.textAlign = 'center';
+        ctx4.fillText("BRECHA ESTRUCTURAL: CERO PUENTES LOCALES", w * 0.5, h * 0.52);
+      }
+
+      if (underThreat) {
+        ctx4.save();
+        ctx4.fillStyle = '#9b2226';
+        ctx4.font = 'bold 12px Courier New';
+        ctx4.textAlign = 'center';
+        const msg = commMode === 'westend' 
+          ? "AMENAZA: DEMOLICIÓN URBANA (COMUNIDAD DESARTICULADA Y DERROTADA)"
+          : "AMENAZA: RESISTENCIA EXITOSA (ACCIÓN COLECTIVA ARTICULADA)";
+        ctx4.fillText(msg, w * 0.5, 24);
+        ctx4.restore();
+      }
+    }
+
+    function setCommunityMode(mode) {
+      commMode = mode;
+      underThreat = false;
+      const title = document.getElementById('txtCommTitle');
+      const desc = document.getElementById('txtCommDesc');
+      const cue = document.getElementById('txtCommCue');
+      const pill = document.getElementById('txtCommPill');
+
+      if (mode === 'westend') {
+        title.textContent = "El Fracaso del West End de Boston (Solo Lazos Fuertes)";
+        desc.textContent = "Comunidad con intensa lealtad micro (familias y amigos íntimos). Sin embargo, carecían de asociaciones o empleos compartidos que crearan lazos débiles; el barrio era un archipiélago de camarillas aisladas.";
+        cue.innerHTML = "<b>Postulado Central:</b><br><i>«Al no haber sendas de intermediarios conocidos entre camarillas, los líderes de un grupo eran vistos con desconfianza por los demás. Nadie logró articular la defensa».</i>";
+        pill.textContent = "Resultado Histórico: El barrio fue demolido por la renovación urbana pese a su enorme solidaridad interna.";
+      } else {
+        title.textContent = "El Éxito de Charlestown (Presencia de Lazos Débiles)";
+        desc.textContent = "Barrio obrero que también enfrentó la renovación urbana en Boston pero logró frenarla. Sus habitantes pertenecían a clubes sociales y compartían trabajos, generando una densa red de lazos débiles transversales.";
+        cue.innerHTML = "<b>Postulado Central:</b><br><i>«Los puentes locales permitieron que la alarma y la confianza en los líderes circularan entre vecindarios distintos, generando movilización unificada».</i>";
+        pill.textContent = "Conclusión de Granovetter: Cuantos más puentes locales posea una comunidad, mayor es su capacidad de actuar en conjunto.";
+      }
+
+      const r = cv4.getBoundingClientRect();
+      renderFig4(r.width, r.height);
+    }
+
+    function triggerThreat() {
+      underThreat = true;
+      const r = cv4.getBoundingClientRect();
+      renderFig4(r.width, r.height);
+    }
+
+    /* ==============================================================
+       INICIALIZACIÓN GLOBAL
+       ============================================================== */
+    window.addEventListener('load', () => {
+      initFig1();
+    });
+
+    window.addEventListener('resize', () => {
+      if (currentTab === 1) initFig1();
+      if (currentTab === 2) initFig2();
+      if (currentTab === 3) initFig3();
+      if (currentTab === 4) initFig4();
+    });
+  </script>
+</body>
+</html>
